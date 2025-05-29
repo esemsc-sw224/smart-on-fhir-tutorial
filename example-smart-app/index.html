@@ -70,7 +70,20 @@
     <!--
       Temporarily disable cerner-smart-embeddable-lib -->
       <script src='https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js'></script>
-      <script src='./lib/js/cerner-smart-embeddable-lib-1.0.0.min.js'></script>
+      <script>
+        var isEmbeddedInMPage = (window.parent !== window && window.name.indexOf('xfc_') === 0);
+        if (isEmbeddedInMPage) {
+        // Only load embeddable-lib when inside an MPage container
+        var script = document.createElement('script');
+        script.src = './lib/js/cerner-smart-embeddable-lib-1.0.0.min.js';
+        document.head.appendChild(script);
+
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = './lib/css/cerner-smart-embeddable-lib-1.0.0.min.css';
+        document.head.appendChild(link);
+        }
+      </script>
 
     <!-- Application-level javascript-->
     <script src='./src/js/example-smart-app.js'></script>
