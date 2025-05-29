@@ -34,11 +34,6 @@
         iss,
         launch,
       });
-      FHIR.oauth2.ready().then(function(client) {
-        client.patient.read().then(function(patient) {
-          console.log(patient);
-        });
-      });
     </script>
     <div class="spinner">
       <div class="bounce1"></div>
