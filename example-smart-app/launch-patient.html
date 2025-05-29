@@ -27,7 +27,8 @@
     <script>
       FHIR.oauth2.authorize({
         'client_id': 'bbc7e9bf-fa54-432f-a527-ff23817f02aa',
-        'scope':  'patient/Patient.read patient/Observation.read launch/patient online_access openid profile'
+        'scope':  'patient/Patient.read patient/Observation.read launch/patient online_access openid profile',
+        'redirect_uri': 'https://esemsc-sw224.github.io/smart-on-fhir-tutorial/example-smart-app'
       });
     </script>
     <div class="spinner">
