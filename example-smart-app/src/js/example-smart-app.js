@@ -57,6 +57,7 @@
           var systolicbp = getBloodPressureValue(byCodes('55284-4'),'8480-6');
           var diastolicbp = getBloodPressureValue(byCodes('55284-4'),'8462-4');
           var hdl = byCodes('2085-9');
+          console.log('LDL OBS:', byCodes('2089-1'));
           var ldl = byCodes('2089-1');
 
           var p = defaultPatient();
@@ -71,7 +72,7 @@
           p.age = age;
           p.glucose = getQuantityValueAndUnit(glucose[0]);
           p.smoke = getSmokerStatus(tobacco);
-          p.gcs = getLatestValidObservation(byCodes('9279-1'), '{score}');
+          p.gcs = getLatestValidObservation(byCodes('9279-1'), null);
           p.cholesterol = getQuantityValueAndUnit(cholesterol[0]);
 
           if (typeof systolicbp != 'undefined')  {
