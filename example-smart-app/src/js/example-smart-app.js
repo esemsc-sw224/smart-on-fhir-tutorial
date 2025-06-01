@@ -22,8 +22,10 @@
                               'http://loinc.org|8302-2',   // Height
                               'http://loinc.org|55284-4',  // Blood pressure panel
                               'http://loinc.org|2085-9',   // HDL
-                              'http://loinc.org|2089-1',    // LDL'http://loinc.org|8302-2', 'http://loinc.org|8462-4',
-                              'http://loinc.org|8480-6'] // Systolic and Diastolic Blood Pressure
+                              'http://loinc.org|2089-1',   // LDL
+                              'http://loinc.org|8480-6',   // Systolic and Diastolic Blood Pressure
+                              'http://loinc.org|8462-4'
+                            ] 
                       }
                     }
                   });
