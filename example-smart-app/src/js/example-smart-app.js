@@ -20,7 +20,7 @@
                               'http://loinc.org|9279-1',   // GCS total score
                               'http://loinc.org|2093-3',   // Cholesterol, Total
                               'http://loinc.org|8302-2',   // Height
-                              'http://loinc.org|29463-7',  // Body weight
+                              'http://loinc.org|3141-9',  // Body weight
                               'http://loinc.org|39156-5',  // BMI
                               'http://loinc.org|55284-4',  // Blood pressure panel
                               'http://loinc.org|2085-9',   // HDL
@@ -44,7 +44,7 @@
           }
 
           var height = byCodes('8302-2');
-          var weight = byCodes('29463-7');
+          var weight = byCodes('3141-9');
           var p_bmi = byCodes('39156-5');
           const birthDate = new Date(patient.birthDate);
           const today = new Date();
