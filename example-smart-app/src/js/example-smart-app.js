@@ -86,10 +86,15 @@
           p.ldl = getQuantityValueAndUnit(ldl[0]);
 
           smart.patient.api.fetchAll({ type: "Condition" }).then(function(conditions) {
-            const diabetes = conditions.find(c =>
-              c.code?.coding?.some(code => code.display?.toLowerCase().includes('diabetes'))
-              );
-            p.diabetes = diabetes ? "Yes" : "No";
+            const diabetesCodes = ['E10', 'E11', 'E13', '44054006', '46635009'];  // ICD & SNOMED
+
+            const hasDiabetes = conditions.some(c =>
+              c.code?.coding?.some(code =>
+                diabetesCodes.includes(code.code)
+              )
+            );
+
+            p.diabetes = hasDiabetes ? "Yes" : "No";
             ret.resolve(p);
             });
           });
@@ -187,7 +192,6 @@
         }
       }
     }
-
     return 'N/A';
   }
 
@@ -210,7 +214,7 @@
     $('#hdl').html(p.hdl);
     $('#glucose').html(p.glucose);
     $('#cholesterol').html(p.cholesterol);
-    $('#tobacco').html(p.tobacco);
+    $('#smoke').html(p.smoke);
     $('#gcs').html(p.gcs);
     $('#diabetes').html(p.diabetes);
 
