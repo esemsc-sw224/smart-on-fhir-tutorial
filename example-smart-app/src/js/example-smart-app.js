@@ -193,27 +193,42 @@
   }
 
   function getSmokerStatus(smokingObservations) {
-    const data = smokingObservations.sort((a, b) => Date.parse(b.issued) - Date.parse(a.issued));
+    if (!Array.isArray(smokingObservations) || smokingObservations.length === 0) {
+      return 'N/A';
+    }
+
     const currentSmokerSnomeds = ['449868002', '428041000124106', '428071000124103',
       '428061000124105', '77176002'];
     const notSmokerSnomeds = ['8517006', '266919005'];
 
+    // 排序时判断有没有 issued 字段
+    const data = smokingObservations
+      .filter(ob => ob.issued) // 排除没有 issued 的
+      .sort((a, b) => new Date(b.issued) - new Date(a.issued));
+
     for (let i = 0; i < data.length; i++) {
       const ob = data[i];
+
+      if (!ob.status || !['final', 'amended'].includes(ob.status.toLowerCase())) {
+        continue;
+      }
+
       if (
-        (ob.status.toLowerCase() === 'final' || ob.status.toLowerCase() === 'amended') &&
         ob.valueCodeableConcept &&
-        ob.valueCodeableConcept.coding &&
-        ob.valueCodeableConcept.coding[0].code
+        Array.isArray(ob.valueCodeableConcept.coding)
       ) {
-        const code = ob.valueCodeableConcept.coding[0].code;
-        if (currentSmokerSnomeds.includes(code)) {
-          return 'Yes';
-        } else if (notSmokerSnomeds.includes(code)) {
-          return 'No';
+        for (const coding of ob.valueCodeableConcept.coding) {
+          const code = coding.code;
+          if (currentSmokerSnomeds.includes(code)) {
+            return 'Yes';
+          }
+          if (notSmokerSnomeds.includes(code)) {
+            return 'No';
+          }
         }
       }
     }
+
     return 'N/A';
   }
 
