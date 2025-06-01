@@ -15,19 +15,21 @@
                     type: 'Observation',
                     query: {
                       code: {
-                        $or: ['http://loinc.org|8302-2', 'http://loinc.org|8462-4',
-                              'http://loinc.org|8480-6', 'http://loinc.org|2085-9',
-                              'http://loinc.org|2089-1', 'http://loinc.org|55284-4']
+                        $or: ['http://loinc.org|2339-0',   // Glucose [Mass/volume] in Blood
+                              'http://loinc.org|72166-2',  // Tobacco smoking status
+                              'http://loinc.org|9279-1',   // GCS total score
+                              'http://loinc.org|2093-3',   // Cholesterol, Total
+                              'http://loinc.org|8302-2',   // Height
+                              'http://loinc.org|55284-4',  // Blood pressure panel
+                              'http://loinc.org|2085-9',   // HDL
+                              'http://loinc.org|2089-1',    // LDL'http://loinc.org|8302-2', 'http://loinc.org|8462-4',
+                              'http://loinc.org|8480-6'] // Systolic and Diastolic Blood Pressure
                       }
                     }
                   });
-        var cond = smart.patient.api.fetchAll({
-                  type: 'Condition'
-                });
+        $.when(pt, obv).fail(onError);
 
-        $.when(pt, obv, cond).fail(onError);
-
-        $.when(pt, obv, cond).done(function(patient, obv, conditions) {
+        $.when(pt, ob).done(function(patient, obv) {
           var byCodes = smart.byCodes(obv, 'code');
           var gender = patient.gender;
 
@@ -40,6 +42,14 @@
           }
 
           var height = byCodes('8302-2');
+          const birthDate = new Date(patient.birthDate);
+          const today = new Date();
+          const age = today.getFullYear() - birthDate.getFullYear() - 
+                      (today < new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate()) ? 1 : 0);
+          var glucose = byCodes('2339-0');
+          var tobacco = byCodes('72166-2');
+          var gcs = byCodes('9279-1');
+          var cholesterol = byCodes('2093-3');
           var systolicbp = getBloodPressureValue(byCodes('55284-4'),'8480-6');
           var diastolicbp = getBloodPressureValue(byCodes('55284-4'),'8462-4');
           var hdl = byCodes('2085-9');
@@ -51,6 +61,11 @@
           p.fname = fname;
           p.lname = lname;
           p.height = getQuantityValueAndUnit(height[0]);
+          p.age = age;
+          p.glucose = getQuantityValueAndUnit(glucose[0]);
+          p.tobacco = tobacco[0]?.valueCodeableConcept?.text || "N/A";
+          p.gcs = getQuantityValueAndUnit(gcs[0]);
+          p.cholesterol = getQuantityValueAndUnit(cholesterol[0]);
 
           if (typeof systolicbp != 'undefined')  {
             p.systolicbp = systolicbp;
@@ -63,11 +78,15 @@
           p.hdl = getQuantityValueAndUnit(hdl[0]);
           p.ldl = getQuantityValueAndUnit(ldl[0]);
 
-          p.rawConditions = conditions;
+          smart.patient.api.fetchAll({ type: "Condition" }).then(function(conditions) {
+          const diabetes = conditions.find(c =>
+            c.code?.coding?.some(code => code.display?.toLowerCase().includes('diabetes'))
+          );
+          p.diabetes = diabetes ? "Yes" : "No";
 
-          ret.resolve(p);
-        });
-      } else {
+          ret.resolve(p);});
+          });
+        } else {
         onError();
       }
     }
@@ -85,11 +104,16 @@
       gender: {value: ''},
       birthdate: {value: ''},
       height: {value: ''},
+      age: {value: ''},
+      glucose: {value: ''},
+      tobacco: {value: ''},
+      gcs: {value: ''},
+      cholesterol: {value: ''},
       systolicbp: {value: ''},
       diastolicbp: {value: ''},
       ldl: {value: ''},
       hdl: {value: ''},
-      rawConditions: []
+      diabetes: {value: 'No'},
     };
   }
 
@@ -128,20 +152,18 @@
     $('#lname').html(p.lname);
     $('#gender').html(p.gender);
     $('#birthdate').html(p.birthdate);
+    $('#age').html(p.age);
     $('#height').html(p.height);
     $('#systolicbp').html(p.systolicbp);
     $('#diastolicbp').html(p.diastolicbp);
     $('#ldl').html(p.ldl);
     $('#hdl').html(p.hdl);
+    $('#glucose').html(p.glucose);
+    $('#cholesterol').html(p.cholesterol);
+    $('#tobacco').html(p.tobacco);
+    $('#gcs').html(p.gcs);
+    $('#diabetes').html(p.diabetes);
 
-    const condDiv = document.getElementById('conditions');
-    p.rawConditions.forEach(cond => {
-      const el = document.createElement('p');
-      el.textContent =
-        `${cond.code?.text || "Unnamed Condition"} - ` +
-        `${cond.clinicalStatus?.coding?.[0]?.code || "N/A"}`;
-      condDiv.appendChild(el);
-    });
   };
 
 })(window);
