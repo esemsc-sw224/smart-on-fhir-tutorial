@@ -71,7 +71,7 @@
           p.age = age;
           p.glucose = getQuantityValueAndUnit(glucose[0]);
           p.smoke = getSmokerStatus(tobacco);
-          p.gcs = getQuantityValueAndUnit(gcs[0]);
+          p.gcs = getLatestValidObservation(byCodes('9279-1'), '{score}');
           p.cholesterol = getQuantityValueAndUnit(cholesterol[0]);
 
           if (typeof systolicbp != 'undefined')  {
@@ -154,11 +154,32 @@
         typeof ob.valueQuantity != 'undefined' &&
         typeof ob.valueQuantity.value != 'undefined' &&
         typeof ob.valueQuantity.unit != 'undefined') {
-          return ob.valueQuantity.value + ' ' + ob.valueQuantity.unit;
+          const val = ob.valueQuantity.value;
+          const unit = ob.valueQuantity.unit;
+
+          // 不显示 {score} 单位
+          if (unit === '{score}') {
+            return `${val}`;
+          } else {
+            return val + ' ' + unit;
+          }
     } else {
       return undefined;
     }
   }
+
+  function getLatestValidObservation(observations, expectedUnit) {
+    const validObs = observations
+      .filter(o =>
+        o?.valueQuantity &&
+        o.valueQuantity.value !== undefined &&
+        (!expectedUnit || o.valueQuantity.unit === expectedUnit)
+      )
+      .sort((a, b) => new Date(b.effectiveDateTime) - new Date(a.effectiveDateTime));
+
+    return validObs.length > 0 ? validObs[0] : undefined;
+  }
+
 
   function getBMI(height, weight) {
     if (typeof height != 'undefined' && typeof weight != 'undefined') {
