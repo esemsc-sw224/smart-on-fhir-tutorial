@@ -157,8 +157,8 @@
 
   function getBMI(height, weight) {
     if (typeof height != 'undefined' && typeof weight != 'undefined') {
-      var heightInMeters = height.valueQuantity.value / 100; // Convert cm to m
-      var weightInKg = weight.valueQuantity.value; // Assuming weight is in kg
+      const heightInMeters = parseFloat(height.split(' ')[0]) / 100;
+      const weightInKg = parseFloat(weight.split(' ')[0]);
       return (weightInKg / (heightInMeters * heightInMeters)).toFixed(2) + ' kg/m²';
     } else {
       return undefined;
