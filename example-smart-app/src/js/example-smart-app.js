@@ -20,11 +20,10 @@
                               'http://loinc.org|9279-1',   // GCS total score
                               'http://loinc.org|2093-3',   // Cholesterol, Total
                               'http://loinc.org|8302-2',   // Height
+                              'http://loinc.org|3141-9',  // Body weight
                               'http://loinc.org|55284-4',  // Blood pressure panel
                               'http://loinc.org|2085-9',   // HDL
                               'http://loinc.org|2089-1'  // LDL
-                              // 'http://loinc.org|8480-6',   // Systolic and Diastolic Blood Pressure
-                              // 'http://loinc.org|8462-4'
                             ]
                       }
                     }
@@ -44,6 +43,7 @@
           }
 
           var height = byCodes('8302-2');
+          var weight = byCodes('3141-9');
           const birthDate = new Date(patient.birthDate);
           const today = new Date();
           const age = today.getFullYear() - birthDate.getFullYear() - 
@@ -63,6 +63,8 @@
           p.fname = fname;
           p.lname = lname;
           p.height = getQuantityValueAndUnit(height[0]);
+          p.weight = getQuantityValueAndUnit(weight[0]);
+          p.bmi = getBMI(p.height, p.weight);
           p.age = age;
           p.glucose = getQuantityValueAndUnit(glucose[0]);
           p.tobacco = tobacco[0]?.valueCodeableConcept?.text || "N/A";
@@ -106,6 +108,8 @@
       gender: {value: ''},
       birthdate: {value: ''},
       height: {value: ''},
+      weight: {value: ''},
+      bmi: {value: ''},
       age: {value: ''},
       glucose: {value: ''},
       tobacco: {value: ''},
@@ -142,6 +146,16 @@
         typeof ob.valueQuantity.value != 'undefined' &&
         typeof ob.valueQuantity.unit != 'undefined') {
           return ob.valueQuantity.value + ' ' + ob.valueQuantity.unit;
+    } else {
+      return undefined;
+    }
+  }
+
+  function getBMI(height, weight) {
+    if (typeof height != 'undefined' && typeof weight != 'undefined') {
+      var heightInMeters = parseFloat(height.split(' ')[0]) / 100; // Convert cm to m
+      var weightInKg = parseFloat(weight.split(' ')[0]); // Assuming weight is in kg
+      return (weightInKg / (heightInMeters * heightInMeters)).toFixed(2) + ' kg/m²';
     } else {
       return undefined;
     }
