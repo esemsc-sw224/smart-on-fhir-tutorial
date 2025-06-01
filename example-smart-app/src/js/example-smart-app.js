@@ -26,7 +26,6 @@
                 });
 
         $.when(pt, obv, cond).fail(onError);
-        // $.when(pt, obv).fail(onError);
 
         $.when(pt, obv, cond).done(function(patient, obv, conditions) {
           var byCodes = smart.byCodes(obv, 'code');
@@ -65,7 +64,6 @@
           p.ldl = getQuantityValueAndUnit(ldl[0]);
 
           p.rawConditions = conditions;
-          // p.rawObservations = obv;
 
           ret.resolve(p);
         });
@@ -91,8 +89,7 @@
       diastolicbp: {value: ''},
       ldl: {value: ''},
       hdl: {value: ''},
-      rawConditions: [],
-      rawObservations: []
+      rawConditions: []
     };
   }
 
@@ -136,15 +133,6 @@
     $('#diastolicbp').html(p.diastolicbp);
     $('#ldl').html(p.ldl);
     $('#hdl').html(p.hdl);
-
-    // const obsDiv = document.getElementById('observations');
-    // p.rawObservations.forEach(obs => {
-    //   const el = document.createElement('p');
-    //   el.textContent =
-    //     `${obs.code?.text || "Unnamed"}: ` +
-    //     `${obs.valueQuantity?.value || "?"} ${obs.valueQuantity?.unit || ""}`;
-    //   obsDiv.appendChild(el);
-    // });
 
     const condDiv = document.getElementById('conditions');
     p.rawConditions.forEach(cond => {
