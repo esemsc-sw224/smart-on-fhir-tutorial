@@ -65,7 +65,7 @@
           p.ldl = getQuantityValueAndUnit(ldl[0]);
 
           p.rawConditions = conditions;
-          p.rawObservations = obv;
+          // p.rawObservations = obv;
 
           ret.resolve(p);
         });
@@ -137,14 +137,14 @@
     $('#ldl').html(p.ldl);
     $('#hdl').html(p.hdl);
 
-    const obsDiv = document.getElementById('observations');
-    p.rawObservations.forEach(obs => {
-      const el = document.createElement('p');
-      el.textContent =
-        `${obs.code?.text || "Unnamed"}: ` +
-        `${obs.valueQuantity?.value || "?"} ${obs.valueQuantity?.unit || ""}`;
-      obsDiv.appendChild(el);
-    });
+    // const obsDiv = document.getElementById('observations');
+    // p.rawObservations.forEach(obs => {
+    //   const el = document.createElement('p');
+    //   el.textContent =
+    //     `${obs.code?.text || "Unnamed"}: ` +
+    //     `${obs.valueQuantity?.value || "?"} ${obs.valueQuantity?.unit || ""}`;
+    //   obsDiv.appendChild(el);
+    // });
 
     const condDiv = document.getElementById('conditions');
     p.rawConditions.forEach(cond => {
