@@ -70,7 +70,7 @@
           p_bmi = getQuantityValueAndUnit(p_bmi[0]);
           p.age = age;
           p.glucose = getQuantityValueAndUnit(glucose[0]);
-          p.tobacco = tobacco[0]?.valueCodeableConcept?.text || "N/A";
+          p.smoke = getSmokerStatus(tobacco);
           p.gcs = getQuantityValueAndUnit(gcs[0]);
           p.cholesterol = getQuantityValueAndUnit(cholesterol[0]);
 
@@ -116,7 +116,7 @@
       bmi_1: {value: ''},
       age: {value: ''},
       glucose: {value: ''},
-      tobacco: {value: ''},
+      smoke: {value: ''},
       gcs: {value: ''},
       cholesterol: {value: ''},
       systolicbp: {value: ''},
@@ -164,6 +164,33 @@
       return undefined;
     }
   }
+
+  function getSmokerStatus(smokingObservations) {
+    const data = smokingObservations.sort((a, b) => Date.parse(b.issued) - Date.parse(a.issued));
+    const currentSmokerSnomeds = ['449868002', '428041000124106', '428071000124103',
+      '428061000124105', '77176002'];
+    const notSmokerSnomeds = ['8517006', '266919005'];
+
+    for (let i = 0; i < data.length; i++) {
+      const ob = data[i];
+      if (
+        (ob.status.toLowerCase() === 'final' || ob.status.toLowerCase() === 'amended') &&
+        ob.valueCodeableConcept &&
+        ob.valueCodeableConcept.coding &&
+        ob.valueCodeableConcept.coding[0].code
+      ) {
+        const code = ob.valueCodeableConcept.coding[0].code;
+        if (currentSmokerSnomeds.includes(code)) {
+          return 'Yes';
+        } else if (notSmokerSnomeds.includes(code)) {
+          return 'No';
+        }
+      }
+    }
+
+    return 'N/A';
+  }
+
 
   window.drawVisualization = function(p) {
     $('#holder').show();
