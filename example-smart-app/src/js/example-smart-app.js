@@ -20,7 +20,8 @@
                               'http://loinc.org|9279-1',   // GCS total score
                               'http://loinc.org|2093-3',   // Cholesterol, Total
                               'http://loinc.org|8302-2',   // Height
-                              'http://loinc.org|3141-9',  // Body weight
+                              'http://loinc.org|29463-7',  // Body weight
+                              'http://loinc.org|39156-5',  // BMI
                               'http://loinc.org|55284-4',  // Blood pressure panel
                               'http://loinc.org|2085-9',   // HDL
                               'http://loinc.org|2089-1'  // LDL
@@ -43,7 +44,8 @@
           }
 
           var height = byCodes('8302-2');
-          var weight = byCodes('3141-9');
+          var weight = byCodes('29463-7');
+          var p_bmi = byCodes('39156-5');
           const birthDate = new Date(patient.birthDate);
           const today = new Date();
           const age = today.getFullYear() - birthDate.getFullYear() - 
@@ -64,7 +66,8 @@
           p.lname = lname;
           p.height = getQuantityValueAndUnit(height[0]);
           p.weight = getQuantityValueAndUnit(weight[0]);
-          p.bmi = getBMI(p.height, p.weight);
+          p.bmi_1 = getBMI(p.height, p.weight);
+          p_bmi = getQuantityValueAndUnit(p_bmi[0]);
           p.age = age;
           p.glucose = getQuantityValueAndUnit(glucose[0]);
           p.tobacco = tobacco[0]?.valueCodeableConcept?.text || "N/A";
@@ -110,6 +113,7 @@
       height: {value: ''},
       weight: {value: ''},
       bmi: {value: ''},
+      bmi_1: {value: ''},
       age: {value: ''},
       glucose: {value: ''},
       tobacco: {value: ''},
