@@ -81,13 +81,12 @@
           p.ldl = getQuantityValueAndUnit(ldl[0]);
 
           smart.patient.api.fetchAll({ type: "Condition" }).then(function(conditions) {
-          const diabetes = conditions.find(c =>
-            c.code?.coding?.some(code => code.display?.toLowerCase().includes('diabetes'))
-            );
-          p.diabetes = diabetes ? "Yes" : "No";
-          });
-
-          ret.resolve(p);
+            const diabetes = conditions.find(c =>
+              c.code?.coding?.some(code => code.display?.toLowerCase().includes('diabetes'))
+              );
+            p.diabetes = diabetes ? "Yes" : "No";
+            ret.resolve(p);
+            });
           });
         } else {
         onError();
